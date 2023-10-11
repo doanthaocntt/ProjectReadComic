@@ -1,0 +1,19 @@
+﻿@using WebTruyen.Models
+@using WebTruyen.Helper
+@model List<ThanhVienNhom>
+@{
+    webtruyenptEntities db = new webtruyenptEntities();
+    Layout = null;   
+}
+<div class="tab-pane" id="ThanhVien">
+    <div class="tab-group-item">
+        <div class="tab-item">
+            <div class="row">
+                <div class="form-group">
+                    <label class="col-form-label">Tìm kiếm: <input class="form-control" type="text" placeholder="Nhập tên thành viên" id="timKiemTV"/></label>                    
+                </div>
+            </div>
+            <div id="thanhVien"></div>
+        </div>
+    </div>
+</div>

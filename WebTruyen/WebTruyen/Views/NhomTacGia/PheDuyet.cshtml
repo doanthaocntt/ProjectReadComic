@@ -1,0 +1,67 @@
+﻿
+@using WebTruyen.Models
+@using WebTruyen.Helper
+@model List<ThanhVienNhom>
+@{
+    webtruyenptEntities db = new webtruyenptEntities();
+    Layout = null;
+}
+<div class="tab-pane" id="PheDuyet">
+    <table class="table table-hover list-bookmark">
+        <thead>
+            <tr>
+                <th>Tên thành viên</th>
+                <th>Ngày tham gia</th>
+                <th>Xét duyệt</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(ThanhVienNhom thanhVienNhom in Model)
+            {
+            <tr>
+                <td>
+                    <div class="mange-name">
+                        <div class="item-thumb">
+                            <a href="#" title="@thanhVienNhom.TaiKhoan.ButDanh">
+                                <img width="75" height="106" src="@(thanhVienNhom.TaiKhoan.Avatar??"/qq")" onerror="this.onerror=null;this.src='/Asset/Web/wp-content/themes/madara/images/no-avatar.png';" class="img-responsive" style="" alt="#">
+                            </a>
+                        </div>
+                        <div class="item-infor">
+                            <div class="post-title">
+                                <h3>
+                                    <a href="@Url.Action("TacGia","Home",new {id = WebTruyen.Helper.Commons.convertToUnSign3(thanhVienNhom.TaiKhoan.ButDanh + "-" + thanhVienNhom.MaTK) })">@thanhVienNhom.TaiKhoan.ButDanh</a>
+                                </h3>
+                            </div>                            
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="post-on">
+                        @thanhVienNhom.Ngayvaonhom.ToString("dd/MM/yyyy")
+                    </div>
+                </td>
+                <td>
+                    <div class="action">
+                        <div class="checkbox">
+                            <input id="#" class="bookmark-checkbox" value="#" type="checkbox" maTV ="@thanhVienNhom.MaTK">
+                            <label for="#"></label>
+                        </div>
+                        <a class="wp-manga-delete-bookmark" href="javascript:void(0)" data-post-id="#" onclick="xoaThanhVien(this,@thanhVienNhom.MaTK)"><i class="icon ion-ios-close"></i></a>
+                    </div>
+                </td>
+            </tr>
+            }
+            <tr>
+                <td colspan="3">
+                    <div class="remove-all float-right">
+                        <div class="checkbox">
+                            <input id="checkall" type="checkbox">
+                            <label for="checkall">Rà soát tất cả</label>
+                        </div>
+                        <button type="button" id="delete-bookmark-manga" class="btn btn-default" onclick="pheDuyet()">Phê duyệt</button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

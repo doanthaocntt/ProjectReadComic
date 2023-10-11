@@ -1,0 +1,137 @@
+﻿@using WebTruyen.Models
+@using WebTruyen.Helper
+@model NhomTG
+@{
+    webtruyenptEntities db = new webtruyenptEntities();
+    Layout = null;
+}
+<div class="tab-pane active" id="ThongTinNhom">
+    <div class="tab-item">
+        <div class="choose-avatar">
+            <div class="loading-overlay">
+                <div class="loading-icon">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+            </div>
+            <div class="c-user-avatar row">
+                <img alt="" src="~/Asset/Web/wp-content/themes/madara/images/nhom.jpg" onerror="this.onerror=null;this.src='https://secure.gravatar.com/avatar/b650eff44bd823b9df5d4fbd0d0b8422?s=390&amp;d=mm&amp;r=g';" class="avatar avatar-195 photo" height="195" width="195" loading="lazy" id="Avatar">
+                <div style="margin-left:20px">
+                    <h1><a href="#suaThongTin" data-toggle="modal"><span id="tenNhom1">@Model.TenNhom </span> @Html.Raw(ViewBag.xemNhom?"": "<i class=\"fas fa-pencil-alt\" id=\"suaNhom\" style=\"cursor: pointer\"></i>")</a> </h1>
+
+                    <p>Số thành viên: @Model.ThanhVienNhoms.ToList().Count</p>
+                    <p id="khauHieu1">@Model.Khauhieu</p>
+                    @if (ViewBag.xemNhom) { 
+                        <button id="thamGia" class="btn btn-info">Tham gia</button>
+                    }                    
+                <div>
+                    @{ThanhVienNhom[] thanhVien = Model.ThanhVienNhoms.Where(x => x.DaDuyet).OrderByDescending(x => x.Ngayvaonhom).ToArray();}
+                    @for (int i = 0; i < (thanhVien.Length < 5 ? thanhVien.Length : 5); i++)
+                    {
+                        <a href="#" data-toggle="tooltip" data-placement="bottom" title="@thanhVien[i].TaiKhoan.ButDanh"><img class="rounded-circle" width="30px" src="@(thanhVien[i].TaiKhoan.Avatar??"pp")" onerror="this.onerror=null;this.src='https://secure.gravatar.com/avatar/b650eff44bd823b9df5d4fbd0d0b8422?s=390&amp;d=mm&amp;r=g';" /></a>
+                    }
+                    @if (!ViewBag.xemNhom)
+                    {
+                        <a href="javascript:void()" onclick="xemThem()">Xem thêm</a>
+                        <script>
+                            function xemThem() {
+                                $("#menuuser").find('[href="#ThanhVien"]').parent().click()
+                                $("#menuuser").find('[href="#ThanhVien"]').click()
+                            }
+                        </script>
+                    }
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane active" id="truyenCuaTG">
+            <table class="table table-hover list-bookmark">
+                <thead>
+                    <tr>
+                        <th>Tên truyện</th>
+                        <th>Thời gian cập nhật</th>
+                        <th>Biên tập</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(vvTruyen truyen in ViewBag.TacPham) { 
+                    <tr>
+                        <td>
+                            <div class="mange-name">
+                                <div class="item-thumb">
+                                    <a href="/Truyen/TomTat/van-dan-chu---17" title="Vấn Đan Chu  ">
+                                        <img width="75" height="106" src="@truyen.AnhBia" class="img-responsive" style="" alt="@truyen.TenTruyen">
+                                    </a>
+                                </div>
+                                <div class="item-infor">
+                                    <div class="post-title">
+                                        <h3>
+                                            <a href="@Url.Action("TomTat","Truyen",new {id = Commons.convertToUnSign3(truyen.TenTruyen+"-"+truyen.MaTruyen)})">@truyen.TenTruyen</a>
+                                        </h3>
+                                    </div>
+                                    <div class="list-chapter">
+                                        <div class="chapter-item ">
+                                            <span class="chapter font-meta">
+                                                <a href="@Url.Action("Truyen","Truyen",new {id = Commons.convertToUnSign3(truyen.TenTruyen+"-"+truyen.MaTruyen), Chuong = truyen.SoChuong1})" class="btn-link">@truyen.TenChuong1</a>
+                                            </span>
+                                        </div>
+                                        <div class="chapter-item ">
+                                            <span class="chapter font-meta">
+                                                <a href="@Url.Action("Truyen","Truyen",new {id = Commons.convertToUnSign3(truyen.TenTruyen+"-"+truyen.MaTruyen), Chuong = truyen.SoChuong1})" class="btn-link">@truyen.TenChuong2</a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="post-on">
+                                @(truyen.NgayDang?.ToString("dd/MM/yyyy"))
+                            </div>
+                        </td>
+                        <td>
+                            @if (!ViewBag.xemNhom && Auth.user().isTruongNhom(Model.MaNhom))
+                            {
+                                <div class="action">
+                                    <div class="checkbox">
+                                        <input id="17" class="bookmark-checkbox" value="17" type="checkbox">
+                                        <label for="17"></label>
+                                    </div>
+                                    <a class="wp-manga-delete-bookmark" href="javascript:void(0)" onclick="suaTruyen(@truyen.MaTruyen)" data-toggle="modal" data-target="#suaTruyen"><i class="icon ion-ios-settings"></i></a>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                    }
+                    
+                    @if (!ViewBag.xemNhom && Auth.user().isTruongNhom(Model.MaNhom))
+                    {
+                        <tr>
+                            <td colspan="3">
+                                <div class="remove-all float-right">
+                                    <div class="checkbox">
+                                        <input id="checkall" type="checkbox">
+                                        <label for="checkall">Rà soát tất cả</label>
+                                    </div>
+                                    <button type="button" id="delete-bookmark-manga" class="btn btn-default">Xóa bỏ</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3">
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>

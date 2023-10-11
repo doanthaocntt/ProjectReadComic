@@ -1,0 +1,793 @@
+﻿@using WebTruyen.Helper
+@using WebTruyen.Models
+@model NhomTG
+@{
+    ViewBag.Title = "Nhóm Tác Giả";
+    Layout = "~/Views/Shared/_Layoutwebindex.cshtml";
+}
+@section css{
+    <link href="~/Asset/TacGia/Trumbowyg-master/dist/ui/trumbowyg.min.css" rel="stylesheet" />
+    <link href="~/Asset/TacGia/uploader-master/src/css/jquery.dm-uploader.css" rel="stylesheet" />
+    <link href="~/Asset/TacGia/uploader-master/styles.css" rel="stylesheet" />
+}
+<style>
+    .modal-open {
+        overflow: hidden;
+    }
+
+        .modal-open .modal {
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1050;
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+    }
+
+    .modal-dialog {
+        position: relative;
+        width: auto;
+        margin: 0.5rem;
+        pointer-events: none;
+    }
+
+    .modal.fade .modal-dialog {
+        transition: -webkit-transform 0.3s ease-out;
+        transition: transform 0.3s ease-out;
+        transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out;
+        -webkit-transform: translate(0, -50px);
+        transform: translate(0, -50px);
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .modal.fade .modal-dialog {
+            transition: none;
+        }
+    }
+
+    .modal.show .modal-dialog {
+        -webkit-transform: none;
+        transform: none;
+    }
+
+    .modal.modal-static .modal-dialog {
+        -webkit-transform: scale(1.02);
+        transform: scale(1.02);
+    }
+
+    .modal-dialog-scrollable {
+        display: -ms-flexbox;
+        display: flex;
+        max-height: calc(100% - 1rem);
+    }
+
+        .modal-dialog-scrollable .modal-content2 {
+            max-height: calc(100vh - 1rem);
+            overflow: hidden;
+        }
+
+        .modal-dialog-scrollable .modal-header,
+        .modal-dialog-scrollable .modal-footer {
+            -ms-flex-negative: 0;
+            flex-shrink: 0;
+        }
+
+        .modal-dialog-scrollable .modal-body {
+            overflow-y: auto;
+        }
+
+    .modal-dialog-centered {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: center;
+        align-items: center;
+        min-height: calc(100% - 1rem);
+    }
+
+        .modal-dialog-centered::before {
+            display: block;
+            height: calc(100vh - 1rem);
+            height: -webkit-min-content;
+            height: -moz-min-content;
+            height: min-content;
+            content: "";
+        }
+
+        .modal-dialog-centered.modal-dialog-scrollable {
+            -ms-flex-direction: column;
+            flex-direction: column;
+            -ms-flex-pack: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+            .modal-dialog-centered.modal-dialog-scrollable .modal-content2 {
+                max-height: none;
+            }
+
+            .modal-dialog-centered.modal-dialog-scrollable::before {
+                content: none;
+            }
+
+    .modal-content2 {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        width: 100%;
+        pointer-events: auto;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 0.3rem;
+        outline: 0;
+    }
+
+    .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1040;
+        width: 100vw;
+        height: 100vh;
+        background-color: #000;
+    }
+
+        .modal-backdrop.fade {
+            opacity: 0;
+        }
+
+        .modal-backdrop.show {
+            opacity: 0.5;
+        }
+
+    .modal-header {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: start;
+        align-items: flex-start;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 1rem 1rem;
+        border-bottom: 1px solid #dee2e6;
+        border-top-left-radius: calc(0.3rem - 1px);
+        border-top-right-radius: calc(0.3rem - 1px);
+    }
+
+        .modal-header .close {
+            padding: 1rem 1rem;
+            margin: -1rem -1rem -1rem auto;
+        }
+
+    .modal-title {
+        margin-bottom: 0;
+        line-height: 1.5;
+    }
+
+    .modal-body {
+        position: relative;
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        padding: 1rem;
+    }
+
+    .modal-footer {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: end;
+        justify-content: flex-end;
+        padding: 0.75rem;
+        border-top: 1px solid #dee2e6;
+        border-bottom-right-radius: calc(0.3rem - 1px);
+        border-bottom-left-radius: calc(0.3rem - 1px);
+    }
+
+        .modal-footer > * {
+            margin: 0.25rem;
+        }
+
+    .modal-scrollbar-measure {
+        position: absolute;
+        top: -9999px;
+        width: 50px;
+        height: 50px;
+        overflow: scroll;
+    }
+
+    @@media (min-width: 576px) {
+        .modal-dialog {
+            max-width: 500px;
+            margin: 1.75rem auto;
+        }
+
+        .modal-dialog-scrollable {
+            max-height: calc(100% - 3.5rem);
+        }
+
+            .modal-dialog-scrollable .modal-content2 {
+                max-height: calc(100vh - 3.5rem);
+            }
+
+        .modal-dialog-centered {
+            min-height: calc(100% - 3.5rem);
+        }
+
+            .modal-dialog-centered::before {
+                height: calc(100vh - 3.5rem);
+                height: -webkit-min-content;
+                height: -moz-min-content;
+                height: min-content;
+            }
+
+        .modal-sm {
+            max-width: 300px;
+        }
+    }
+
+    @@media (min-width: 992px) {
+        .modal-lg,
+        .modal2-xl {
+            max-width: 800px;
+        }
+    }
+
+    @@media (min-width: 1200px) {
+        .modal2-xl {
+            max-width: 1140px;
+        }
+    }
+    .card {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 0 solid rgba(0,0,0,.125);
+        border-radius: .25rem;
+    }
+
+    .direct-chat-text {
+        border-radius: .3rem;
+        background-color: #d2d6de;
+        border: 1px solid #d2d6de;
+        color: #444;
+        margin: 5px 0 0 50px;
+        padding: 5px 10px;
+        position: relative;
+    }
+
+    .direct-chat-primary .right > .direct-chat-text {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: #fff;
+    }
+</style>
+<div class="site-content">
+
+    <div class="c-page-content style-2">
+        <div class="content-area">
+            <div class="container">
+                <div class="row ">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="main-col-inner">
+                            <div id="post-5" class="c-blog-post post-5 page type-page status-publish hentry">
+                                <div class="entry-header">
+                                    <div class="entry-header_wrap">
+                                        <div class="entry-title">
+                                            <h1 class="item-title h2">User Settings</h1>
+                                        </div>
+
+                                        <div class="entry-meta">
+                                            <div class="post-on">
+                                                <span class="font-meta">posted on</span>
+                                                <div class="c-blog__date">
+                                                    <span class="posted-on"> <a href="https://tvtruyen.net/user-settings/" rel="bookmark">04/10/2017</a></span>
+                                                    <span class="post-category"><br></span>
+                                                </div>
+                                            </div>
+                                            <div class="post-meta total-count font-meta"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="entry-content">
+                                    <div class="entry-content_wrap">
+                                        <div class="row settings-page">
+                                            <div class="col-md-3 col-sm-3">
+                                                <div class="nav-tabs-wrap">
+                                                    <ul class="nav nav-tabs" id="menuuser">
+                                                        <li class="active">
+                                                            <a href="#ThongTinNhom" data-toggle="tab"><i class="fas fa-address-card"></i>Thông tin nhóm</a>
+                                                        </li>
+                                                        <li class="">
+                                                            <a href="#ThanhVien" data-toggle="tab"><i class="far fa-address-book"></i>Thành viên</a>
+                                                        </li>
+                                                        @if (ViewBag.truongNhom == 1)
+                                                        {
+                                                            <li class="">
+                                                                <a href="#DangTacPham" data-toggle="tab"><i class="fas fa-copy"></i>Đăng tác phẩm</a>
+                                                            </li>
+                                                        }
+                                                        <li class="">
+                                                            <a href="#DangChuong" data-toggle="tab"><i class="fas fa-edit"></i>Đăng chương</a>
+                                                        </li>
+                                                        @if (ViewBag.truongNhom == 1)
+                                                        {
+                                                            <li class="">
+                                                                <a href="#PheDuyet" data-toggle="tab"><i class="fas fa-pen-square"></i>Phê duyệt thành viên</a>
+                                                            </li>
+                                                        }
+                                                        <li class="">
+                                                            <a href="#TraoDoi" data-toggle="tab"><i class="fas fa-comments"></i>Trao đổi</a>
+                                                        </li>
+                                                        <li class="" id="roiNhom">
+                                                            <a href="javadcipt:void(0)"><i class="fas fa-sign-out-alt"></i>Rời nhóm</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-9 col-sm-9">
+                                                <div class="tabs-content-wrap">
+                                                    <div class="tab-content">
+                                                        @{
+                                                            if (ViewBag.truongNhom == 1)
+                                                            {
+                                                                Html.RenderAction("DangTacPham", "NhomTacGia");
+                                                                Html.RenderAction("PheDuyet", "NhomTacGia", new { maNhom = ViewBag.maNhom });
+                                                            }
+                                                            Html.RenderAction("thongTinNhomTacGia", "NhomTacGia", new { maNhom = ViewBag.maNhom });
+                                                            Html.RenderAction("DangChuong", "NhomTacGia", new { maNhom = ViewBag.maNhom });
+                                                            Html.RenderAction("ThanhVienNhom", "NhomTacGia", new { maNhom = ViewBag.maNhom });
+                                                            Html.RenderAction("traoDoi", "NhomTacGia", new { maNhom = ViewBag.maNhom });
+
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- The Modal -->
+<div class="modal fade" id="chonAnh">
+    <div class="modal-dialog modal2-xl" style="width: 80%">
+        <div class="modal-content2">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Chọn Ảnh</h4>
+                <button type="button" class="close" data-dismiss="modal" onclick="anhBia = true">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#allAnh">Danh sách ảnh</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#menu1">Tải Ảnh</a>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div id="allAnh" class="container tab-pane active" style="overflow-y:scroll; height:500px">
+
+                    </div>
+                    <div id="menu1" class="container tab-pane fade">
+                        <div id="drag-and-drop-zone" class="dm-uploader p-5">
+                            <h3 class="mb-5 mt-5 text-muted">Kéo ảnh vào đây</h3>
+
+                            <div class="btn btn-primary btn-block mb-5">
+                                <span>Chọn tệp</span>
+                                <input type="file" title='Click to add Files' />
+                            </div>
+                        </div><!-- /uploader -->
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped active" role="progressbar" id="progress"
+                                 aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="anhBia = true" id="dongAnh">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="dangTacPham">
+    <div class="modal-dialog modal2-xl" style="width: 80%">
+        <div class="modal-content2">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Tùy chọn</h4>
+                <button type="button" class="close" data-dismiss="modal" onclick="anhBia = true">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <label class="mr-sm-2">Thể loại</label>
+                <select class="form-control mb-2 mr-sm-2" id="theLoai">
+                    @foreach (TheLoai theLoai in ViewBag.theLoai)
+                    {
+                        <option value="@theLoai.MaLoai">@theLoai.TenLoai</option>
+                    }
+                </select>
+                <label class="mr-sm-2">Tác giả gốc</label>
+                <input type="text" class="form-control mb-2 mr-sm-2" placeholder="Nhập tác giả gốc" id="tacGiaGoc">
+                <br />
+                <label class="mr-sm-2">Loại truyện</label>
+                <select class="form-control mb-2 mr-sm-2" id="loaiTruyen">
+                    <option value="1">Truyện Chữ</option>
+                    <option value="2">Truyện Tranh</option>
+                </select>
+                @if (Auth.tacGia().VaiTro == vtTacGia.dichGia)
+                {
+                    <label class="mr-sm-2">Vai Trò</label>
+                    <select class="form-control mb-2 mr-sm-2" id="vaiTro">
+                        <option value="1">Tác Giả</option>
+                        <option value="2">Dịch Giả</option>
+                    </select>
+                }
+                <button type="button" id="dangTruyen" class="btn btn-primary mb-2">Đăng tác phẩm</button>
+                <button type="button" id="luuNhap" class="btn btn-primary mb-2">Lưu nháp</button>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--Modal sửa truyện-->
+<!-- The Modal -->
+<div class="modal fade" id="suaTruyen">
+    <div class="modal-dialog modal2-xl" style="width: 80%">
+        <div class="modal-content2">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Sửa truyện</h4>
+                <button type="button" class="close" data-dismiss="modal" onclick="anhBia = true">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="anhBia = true" id="dongAnhBia">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal sửa thông tin nhóm-->
+<!-- The Modal -->
+<div class="modal fade" id="suaThongTin">
+    <div class="modal-dialog modal2-xl" style="width: 80%">
+        <div class="modal-content2">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Sửa thông tin</h4>                
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="col-form-lable">Nhập tên nhóm</label>
+                    <input class="form-control" value="@Model.TenNhom" id="tenNhom" />
+                    <label class="col-form-lable">Nhập khẩu hiệu</label>
+                    <input class="form-control" value="@Model.Khauhieu" id="khauHieu" />
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="suaTT">Sửa</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section js{
+    <script src="~/Asset/TacGia/Trumbowyg-master/dist/trumbowyg.min.js"></script>
+    <script src="~/Asset/TacGia/uploader-master/src/js/jquery.dm-uploader.js"></script>
+    <script>
+        const maNhom = @ViewBag.maNhom;
+        const maTV = @Auth.MaTk();
+    </script>
+    <script>
+        var anhTG = [
+            @foreach (QuanLyHinhAnh anh in ViewBag.anhCuaTG)
+            {
+                @Html.Raw("{url: '"+anh.URL+"', MaAnh: "+anh.MaAnh+"},")
+            }
+        ]
+    </script>
+    <script>
+        $(document).ready(function () {
+            reload_Truyen()
+        })
+        async function reload_Truyen() {
+            debugger
+            let Truyen = await API.layTruyenNhom(maNhom)
+            let truyen = ""
+            Truyen.forEach((item, index) => {
+                truyen += '<option value="' + item.MaTruyen + ',' + item.LoaiTruyen + '">' + item.TenTruyen + '</option>'
+            })
+            $("#c_tenTruyen").html(truyen)
+            $("#c_tenTruyen").change()
+        }
+        $('#editor_e').trumbowyg({
+            btnsDef: {
+                insertImage: {
+                    fn: function () {
+                        anhBia = false
+                        $("#btn_themAnhBia").click()
+                    },
+                    ico: 'insertImage'
+                },
+            },
+            btns: [
+                ['strong', 'em'],
+                ['justifyLeft', 'justifyCenter', 'insertImage'],
+            ]
+        });
+        var anhBia = true
+        $('#editor').trumbowyg({
+            btnsDef: {
+                insertImage: {
+                    fn: function () {
+                        anhBia = false
+                        $("#btn_themAnhBia").click()
+                    },
+                    ico: 'insertImage'
+                },
+            },
+            btns: [
+                ['strong', 'em'],
+                ['justifyLeft', 'justifyCenter'],
+            ]
+        });
+        $(document).ready(function () {
+            $("#menuuser li").click(function () {
+                $("#menuuser li").removeClass("active")
+                $(this).addClass("active")
+            });
+            $('#drag-and-drop-zone').dmUploader({ //
+                url: '@Url.Action("ThemAnh","TacGia")',
+                maxFileSize: 3000000, // 3 Megs
+                onDragEnter: function () {
+                    // Happens when dragging something over the DnD area
+                    this.addClass('active');
+                },
+                onDragLeave: function () {
+                    // Happens when dragging something OUT of the DnD area
+                    this.removeClass('active');
+                },
+                onBeforeUpload: function (id) {
+                    $("#progress").css({ width: "0" })
+                },
+                onUploadProgress: function (id, percent) {
+                    // Updating file progress
+                },
+                onUploadSuccess: function (id, data) {
+                    debugger
+                    if (data.result) {
+                        $("#progress").css({ width: "100%" })
+                        window.setTimeout(function () { $("#progress").css({ width: "0%" }) }, 1000)
+                        //let anh = $("[id_anh]").first().clone(true)
+                        //$(anh).appendTo('#allAnh')
+                        //$(anh).attr("id_anh", data.MaAnh)
+                        //$(anh).attr("src", data.URL)
+                        anhTG.push({ url: data.URL, MaAnh: data.MaAnh })
+                        reload()
+                    } else {
+                        alert(data.msg)
+                    }
+                    // A file was successfully uploaded
+                },
+                onUploadError: function (id, xhr, status, message) {
+                },
+                onFallbackMode: function () {
+                    // When the browser doesn't support this plugin :(
+                },
+                onFileSizeError: function (file) {
+
+                }
+            });
+        })
+    </script>
+    <script>
+        var truongNhom = @ViewBag.truongNhom;
+        let showMenu = false
+        $(window).click(function () {
+            if (!showMenu)
+                $(".dropdown-menu").hide()
+        })
+    </script>
+    <script src="~/Scripts/react/reactNhomTG.js" type="text/babel"></script>
+    <script src="~/Scripts/react/reactTacGia.js" type="text/babel"></script>
+    <script>
+        function pheDuyet() {
+            let check = []
+            $("#PheDuyet").find(".bookmark-checkbox").each(function () {
+                if ($(this).is(":checked")) {
+                    check.push(this)
+                }
+            })
+            check.forEach(async function (item, index) {
+                let maTV = parseInt($(item).attr("maTV"))
+                let rs = await API.pheDuyetThanhVien(maTV, maNhom)
+            })
+            check.forEach(function (item, index) {
+                $(item).parents("tr").remove()
+            })
+            debugger
+            readerTV()
+        }
+        async function xoaThanhVien(e, maTV) {
+            let rs = await API.xoaThanhVien(maTV, maNhom)
+            if (rs) {
+                $(e).parents("tr").remove()
+            }
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#dangTruyen,#luuNhap").click(async function () {
+                debugger
+                let tamAn = $(this).attr("id") == "luuNhap"
+                let theLoai = parseInt($("#theLoai").val())
+                let tacGiaGoc = $("#tacGiaGoc").val()
+                let loaiTruyen = parseInt($("#loaiTruyen").val())
+                let anhBia = parseInt($("#anhBia").attr("idAnh"))
+                let noiDung = $('#editor').trumbowyg('html')
+                if (noiDung.length > 1900) {
+                    alert("Nội dung không được quá 2000 ký tự")
+                    return
+                }
+                let tenTruyen = $("#tenTruyen").val()
+                let vaiTro = ($("#vaiTro").val() == null ? 1 : $("#vaiTro").val())
+                $("body").ajaxOn()
+                let rs = await API.DangTruyen(0, tenTruyen, theLoai, tacGiaGoc, tamAn, anhBia, loaiTruyen, noiDung, vaiTro, null, maNhom)
+                if (rs) {
+                    $("body").ajaxOff()
+                    $("#tacGiaGoc").val("");
+                    $('#editor').trumbowyg('html', "")
+                    $("#tenTruyen").val("")
+                    $(".close").click()
+                    alert("Đăng truyện thành công")
+                } else {
+                    $("body").ajaxOff()
+                    alert("Đăng thất bại")
+                }
+                reload_Truyen()
+
+            })
+        })
+        function suaTruyen(maTruyen) {
+            let iframe = '<iframe src="/TacGia/suaTacPham/' + maTruyen + '?maNhom=' + maNhom + '" width="100%" height="300px" onload="offAjax()"></iframe>'
+            $("#suaTruyen").find(".modal-body").html(iframe)
+            $("#suaTruyen").ajaxOn()
+        }
+        function offAjax() {
+            $("#suaTruyen").ajaxOff()
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#c_tenTruyen").change(async function () {
+                let maTr = $(this).val().split(",")[0]
+                let soChuong = await API.laySoChuongTruyen(maTr)
+                let chuongMoi = soChuong.length + 1
+                let chuong = '<option value="' + maTr + ',' + chuongMoi + '">' + ("Mới") + '</option>'
+                soChuong.forEach(function (item, index) {
+                    chuong += '<option value="' + item.MaTruyen + ',' + item.SoChuong + '">' + ("Chương" + item.SoChuong + ": " + item.TenChuong) + '</option>'
+                })
+                $("#c_tenChuong").html(chuong)
+            })
+            $("#c_tenChuong").change(async function () {
+                debugger
+                let maTr = parseInt($(this).val().split(",")[0])
+                let soChuong = parseInt($(this).val().split(",")[1])
+                let noiDung = await API.layNoiDungChuong(maTr, soChuong)
+                $("#editor_e").trumbowyg("html", noiDung.NoiDung)
+                $("#tenChuong").val(noiDung.TenChuong)
+            })
+            $("#dangChuong,#luuNhapChuong").click(async function () {
+                debugger
+                let maTr = parseInt($("#c_tenChuong").val().split(",")[0])
+                let soChuong = parseInt($("#c_tenChuong").val().split(",")[1])
+                let tenChuong = $("#tenChuong").val()
+                let loaiTruyen = parseInt($("#c_tenTruyen").val().split(",")[1])
+                let noiDung = $("#editor_e").trumbowyg("html")
+                if (loaiTruyen == 2) {
+                    $("#truyenTranh").html(noiDung)
+                    noiDung = ""
+                    $("#truyenTranh").find("[maAnh]").each(function () {
+                        noiDung += $(this).attr("maAnh") + ","
+                    })
+                    $("#truyenTranh").html("")
+                    noiDung = noiDung.substring(0, noiDung.length - 1)
+                }
+                let Dang = $(this).attr("id") == "dangChuong"
+                let rs = await API.createOrUpdateChuong(maTr, soChuong, tenChuong, noiDung, Dang)
+                if (rs) {
+                    $("#c_tenTruyen").change()
+                    alert("Đăng chương thành công")
+                }
+
+            })
+            $("#xoaChuong").click(async function () {
+                if (confirm("Bạn có muốn xóa chương này")) {
+                    let maTr = parseInt($("#c_tenChuong").val().split(",")[0])
+                    let soChuong = parseInt($("#c_tenChuong").val().split(",")[1])
+                    let rs = await API.xoaChuongTG(maTr, soChuong)
+                    if (rs) {
+                        $("#c_tenTruyen").change()
+                        alert("Xóa chương thành công")
+                    }
+                }
+
+            })
+        })
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#suaTT").click(async function () {
+                debugger
+                let tenNhom = $("#tenNhom").val()
+                let khauHieu = $("#khauHieu").val()
+                let rs = await API.suaTTNhom(maNhom, tenNhom, khauHieu)
+                if (rs) {
+                    $("#tenNhom1").text(tenNhom)
+                    $("#khauHieu1").text(khauHieu)
+                    alert("Sửa thành công")
+                }
+            })
+            $("#roiNhom").click(async function () {
+                if (confirm("Bạn có muốn rời nhóm chứ")) {
+                    let rs = await API.roiNhom(maNhom)
+                    if (rs) {
+                        window.location.href = "/"
+                    }
+                }                
+            })
+        })
+    </script>
+    <script src="~/Scripts/jquery.signalR-2.4.2.min.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Scripts/react/reactTraoDoi.js" type="text/babel"></script>
+
+}

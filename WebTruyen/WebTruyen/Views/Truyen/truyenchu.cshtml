@@ -1,0 +1,17 @@
+﻿@using WebTruyen.Models
+@using WebTruyen.Helper
+@model ChuongTruyen 
+@{
+    ViewBag.Title = "truyenchu";
+    ViewBag.ChuongTruyen = Model;
+    Layout = "~/Views/Shared/Layoutdoctruyen.cshtml";
+}
+
+<div class="reading-content">
+    <div class="text-left">
+        @Html.Raw(Model.NoiDung)
+    </div>
+    <div id="text-chapter-toolbar">
+        <a href="#"><i class="icon ion-md-settings"></i></a>
+    </div>
+</div>
